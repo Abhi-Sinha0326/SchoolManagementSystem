@@ -1,0 +1,66 @@
+.HeaderContainer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 32px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.HeaderTitle {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.HeaderNav {
+    display: flex;
+    align-items: center;
+}
+
+.NavList {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.NavItem {
+    margin: 0 15px;
+}
+
+.NavItem a {
+    text-decoration: none;
+    color: #333;
+    font-size: 16px;
+}
+
+.NavItem a:hover {
+    color: #007bff;
+}
+
+.profileDropdown {
+    position: absolute;
+    right: 10px;
+    top: 64px;
+    background: #FFFFFF;
+    border-radius: 10px;
+    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.25);
+    z-index: 2;
+    padding: 16px;
+}
+
+.profileDetails li,
+.profileLinks li {
+    margin-bottom: 10px;
+    list-style: none;
+}
+
+.profileLinksItem {
+    text-decoration: none;
+    color: #333;
+    cursor: pointer;
+}
+
+.profileLinksItem:hover .label {
+    color: #007bff;
+}

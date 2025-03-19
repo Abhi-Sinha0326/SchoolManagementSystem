@@ -1,0 +1,86 @@
+.login-container {
+    display: flex;
+    flex-direction: row;
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+  }
+  
+  .left-section {
+    flex: 1;
+    background-color: #0161B0;
+    color: white;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  
+  .left-section h1 {
+    font-size: 30px;
+    margin-bottom: 20px;
+  }
+  
+  .left-section p {
+    font-size: 15px;
+  }
+  
+  .right-section {
+    flex: 1.5;
+    background-color: #b6b7bd;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 50px;
+  }
+  
+  .right-section h2 {
+    margin-bottom: 20px;
+  }
+  
+  .login-form {
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .login-form label {
+    margin-bottom: 10px;
+    font-weight: bold;
+  }
+  
+  .login-form input {
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .login-form button {
+    background-color: #0161b0;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: not-allowed;
+  }
+  
+  .app-promotion {
+    text-align: center;
+    margin-top: 20px;
+  }
+  
+  .app-promotion p {
+    margin-bottom: 10px;
+  }
+  
+  .get-app-button {
+    background-color: #f93e3e;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
