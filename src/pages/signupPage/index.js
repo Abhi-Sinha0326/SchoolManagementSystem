@@ -57,7 +57,7 @@ const SignUpPage = () => {
   const mobileNo = `${values.stdCode}-${values.mobile}`
   console.log('checking mobile No', mobileNo);
     axios
-    .post("/ims/signup", {
+    .post("/signup", {
       firstName: values.firstName,
       lastName: values.lastName,
       email: values.email,

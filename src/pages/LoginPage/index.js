@@ -12,26 +12,28 @@ const LoginPage = ({ setIsLoggedIn, setUserId }) => {
   };
 
   const onFinish = (values) => {
-    axios
-    .post(`/ims/userLogin?loginId=${values.userName}&password=${values.password}`)
-    .then((res) => {
-      console.log('checking res', res);
-      notification.success({
-        message: "Login successfully!",
+    axios.post(`/userLogin?loginId=${values.userName}&password=${values.password}`)
+      .then((res) => {
+        console.log('checking res', res);
+        notification.success({
+          message: "Login successfully!",
+        });
+  
+        localStorage.setItem("userId", values.userName);
+        setUserId(values.userName); 
+        setIsLoggedIn(true);
+  
+        if (values.userName.includes('Principal')) {
+          navigate("/adminLogin");
+        } else {
+          navigate("/home");
+        }
+      })
+      .catch((err) => {
+        message.error("Failed to login.");
       });
-      setUserId(values.userName);
-      setIsLoggedIn(true);
-      if (values.userName.includes('Principal')) {
-        navigate("/adminLogin");
-      } else {
-        navigate("/home");
-      }
-    })
-    .catch((err) => {
-      message.error("Failed to load states.");
-    });
   };
-
+  
   return (
     <div className="login-container">
       <div className="left-section">

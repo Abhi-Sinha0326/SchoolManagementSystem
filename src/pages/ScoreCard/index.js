@@ -56,7 +56,7 @@ const ScoreCard = ({ userId }) => {
   useEffect(() => {
     const studyingclass = localStorage.getItem('studyingClass');
     axios
-      .get(`/ims/marks/getMarks?studyingclass=${studyingclass}`)
+      .get(`/getStudentMarks?studyingclass=${studyingclass}`)
       .then((res) => {
         const fetchedLists = res.data.map((item, index) => {
           const marksScored = item.hindi + item.english + item.maths + item.science;

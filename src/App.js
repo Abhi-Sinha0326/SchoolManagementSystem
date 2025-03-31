@@ -24,7 +24,12 @@ const App = () => {
       localStorage.removeItem("userId");
       setIsLoggedIn(false);
     }
+  
+    return () => {
+      localStorage.removeItem("userId");
+    };
   }, [userId]);
+  
 
   return ( 
     <>

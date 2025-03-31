@@ -43,14 +43,17 @@ const Header = ({ isLoggedIn, setIsLoggedIn, setUserId }) => {
 
   useEffect(() => {
     const userId = localStorage.getItem("userId");
-    axios
-      .get(`/ims/userDetails?signupId=${userId}`)
-      .then((res) => {
-        setUserDetails(res.data);
-        localStorage.setItem("userRole", res.data.role);
-        localStorage.setItem("studyingClass", res.data.studyingclass);
-      })
+    if (userId) {
+      axios.get(`/userDetails?signupId=${userId}`)
+        .then((res) => {
+          setUserDetails(res.data);
+          localStorage.setItem("userRole", res.data.role);
+          localStorage.setItem("studyingClass", res.data.studyingclass);
+        })
+        .catch(err => console.error("Error fetching user details:", err));
+    }
   }, []);
+  
 
 
   return (

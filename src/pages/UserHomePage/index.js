@@ -50,38 +50,36 @@ const UserHomePage = ({ userId }) => {
   ];
 
   useEffect(() => {
-    const role=parseInt(localStorage.getItem('userRole'), 10);
-    console.log('cehck', role);
-    setUserRole(role);
-    if (role === 3) {
+    const storedRole = parseInt(localStorage.getItem('userRole'), 10);
+    const storedStudyingClass = localStorage.getItem('studyingClass');
+  
+    setUserRole(storedRole);
+  
+    if (storedRole === 3) {
       navigate('/studentsPage');
     }
-    let userRol = role === 2 ? 3 : null;
-    const studyingclass=localStorage.getItem('studyingClass');
-    axios
-      .get(`/ims/getStudentList?role=${userRol}&studyingclass=${studyingclass}`)
-      .then((res) => {
-        const fetchedLists = res.data.map((item, index) => ({
-          key: `${index + 1}`,
-          firstName: item.firstName,
-          lastName: item.lastName,
-          email: item.email,
-          mobile: item.mobile,
-          rollnumber: item.rollnumber,
-        }));
   
-        setStudentList(fetchedLists);
-        notification.success({
-          message: "Student List loaded successfully!",
+    if (storedRole && storedStudyingClass) {
+      axios.get(`/getStudentList?role=${storedRole === 2 ? 3 : null}&studyingclass=${storedStudyingClass}`)
+        .then((res) => {
+          setStudentList(res.data.map((item, index) => ({
+            key: `${index + 1}`,
+            firstName: item.firstName,
+            lastName: item.lastName,
+            email: item.email,
+            mobile: item.mobile,
+            rollnumber: item.rollnumber,
+          })));
+          notification.success({ message: "Student List loaded successfully!" });
+        })
+        .catch((err) => {
+          console.error("Error fetching student list:", err);
+          message.error("Failed to load Student List.");
         });
-      })
-      .catch((err) => {
-        console.log('checking error: ' + err);
-        message.error("Failed to load Student List.");
-        console.error(err);
-      });
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userId]);
+  }, [userId]); // Trigger only when userId changes
+  
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -92,7 +90,7 @@ const UserHomePage = ({ userId }) => {
   const handleAddMask = () => {
     const studyingclass=localStorage.getItem('studyingClass');
     form.validateFields().then((values) => {
-      axios.post('/ims/marks/add', {
+      axios.post('/marks/add', {
         rollnumber: values.rollNumber,
         hindi: values.hindi,
         english: values.english,
@@ -107,7 +105,7 @@ const UserHomePage = ({ userId }) => {
       .then((res) => {
         console.log('checking res', res);
         notification.success({
-          message: `Marks Added - ${res.data}`,
+          message: res.data,
         });
       })
       .catch((err) => {

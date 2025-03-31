@@ -5,40 +5,107 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } fro
 
 const { Option } = Select;
 
-// const dummyData = [
-//   { id: 1, rollnumber: 101, studyingclass: 5, hindi: 85, english: 78, maths: 92, science: 88 },
-//   { id: 2, rollnumber: 102, studyingclass: 5, hindi: 75, english: 82, maths: 79, science: 85 },
-//   { id: 3, rollnumber: 103, studyingclass: 6, hindi: 89, english: 88, maths: 95, science: 91 },
-//   { id: 4, rollnumber: 104, studyingclass: 6, hindi: 67, english: 74, maths: 80, science: 77 },
-//   { id: 5, rollnumber: 105, studyingclass: 7, hindi: 90, english: 85, maths: 87, science: 89 },
-//   { id: 6, rollnumber: 106, studyingclass: 7, hindi: 78, english: 80, maths: 82, science: 79 }
-// ];
-
 const AdminLogin = () => {
+  const [marksList, setMarkersList] = useState([]);
   const [selectedClass, setSelectedClass] = useState(null);
   const [selectedSubject, setSelectedSubject] = useState("hindi");
-  const [marksList, setMarkersList] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   
   useEffect(() => {
-    axios.get(`/ims/marks/all`)
+    axios.get("/marks/all")
       .then((res) => {
-        console.log('checking res', res);
-        setMarkersList(res.data || []); // Ensure data is set or default to []
+        setMarkersList(res.data || []);
       })
       .catch(error => console.error("Error fetching data:", error));
   }, []);
   
   useEffect(() => {
+    if (marksList.length > 0) {
+      const defaultClass = marksList[0].studyingclass;
+      setSelectedClass(defaultClass);
+      setFilteredData(marksList.filter((item) => item.studyingclass === defaultClass));
+    }
+  }, [marksList]);
+
+  useEffect(() => {
     if (selectedClass) {
       setFilteredData(marksList.filter((item) => item.studyingclass === selectedClass));
-    } else {
-      setFilteredData(marksList);
     }
   }, [selectedClass, marksList]);
 
+  useEffect(() => {
+    if (selectedClass) {
+      getAverageMarks();
+    }
+  }, [selectedClass]);
+  
+  const [averageMarks, setAverageMarks] = useState([]);
+
+  const getAverageMarks = async () => {
+    const uniqueClasses = [...new Set(marksList.map(item => item.studyingclass))];
+  
+    try {
+      const responses = await Promise.all(
+        uniqueClasses.map(cls =>
+          axios.get(`/averageMarks?studyingclass=${cls}`)
+        )
+      );
+
+      const avgMarksData = responses.map((res, index) => ({
+        avgMarks: res.data
+      }));
+  
+      setAverageMarks(avgMarksData);
+  
+    } catch (error) {
+      console.error("Error fetching average marks:", error);
+    }
+  };
+    
+  const getTopStdntMarks = async () => {
+    const uniqueClasses = [...new Set(marksList.map(item => item.studyingclass))];
+  
+    try {
+      const responses = await Promise.all(
+        uniqueClasses.map(cls =>
+          axios.get(`/top-students?studyingclass=${cls}&subject=${selectedSubject}`)
+        )
+      );
+
+      const topStdntMark = responses.map((res, index) => ({
+        topStdntsMarks: res.data
+      }));
+      
+      // setAverageMarks(topStdntMark);
+  
+    } catch (error) {
+      console.error("Error fetching average marks:", error);
+    }
+  };
+
+  const getBottomStdntMarks = async () => {
+    const uniqueClasses = [...new Set(marksList.map(item => item.studyingclass))];
+  
+    try {
+      const responses = await Promise.all(
+        uniqueClasses.map(cls =>
+          axios.get(`/averageMarks?studyingclass=${cls}&subject=${selectedSubject}`)
+        )
+      );
+
+      const avgMarksData = responses.map((res, index) => ({
+        avgMarks: res.data
+      }));
+  
+      setAverageMarks(avgMarksData);
+  
+    } catch (error) {
+      console.error("Error fetching average marks:", error);
+    }
+  };
+
   const calculateStatistics = (subject) => {
-    if (!marksList || marksList.length === 0) return [];
+    console.log('checking averageMarks', averageMarks);
 
     const classGroups = {};
     marksList.forEach((item) => {
@@ -46,15 +113,18 @@ const AdminLogin = () => {
       classGroups[item.studyingclass].push(item[subject]);
     });
 
-    return Object.keys(classGroups).map((classNum) => {
-      const scores = classGroups[classNum];
-      return {
-        class: `Class ${classNum}`,
-        avg: (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(2),
-        top3: scores.sort((a, b) => b - a).slice(0, 3).join(", "),
-        bottom3: scores.sort((a, b) => a - b).slice(0, 3).join(", ")
-      };
-    });
+    const allMarks = averageMarks.flatMap(item => item.avgMarks);
+  
+    const filteredData = allMarks.filter(item => 
+      item.subject.toLowerCase() === subject.toLowerCase()
+    );
+    console.log('Filtered data', filteredData);
+    return filteredData.map((item) => ({
+      class: `Class ${item.studyingclass}`,
+      avg: item.avgMarks,
+      top3: "N/A", // Modify if needed
+      bottom3: "N/A" // Modify if needed
+    }));
   };
 
   const classStats = calculateStatistics(selectedSubject);
@@ -62,7 +132,7 @@ const AdminLogin = () => {
   return (
     <div>
       <Card>
-        <Select placeholder="Select Class" onChange={setSelectedClass} style={{ width: 200, marginRight: 10 }}>
+        <Select value={selectedClass} onChange={setSelectedClass} style={{ width: 200, marginRight: 10 }}>
           {[...new Set(marksList.map((item) => item.studyingclass))].map((cls) => (
             <Option key={cls} value={cls}>{`Class ${cls}`}</Option>
           ))}
